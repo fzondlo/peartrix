@@ -1,0 +1,20 @@
+<%= image_tag('pear-programming.png') %>
+
+<h1>Team <%= @team.name %></h1>
+
+Members:
+<%= form_tag(team_pairs_path(@team)) do %>
+  <ul>
+    <% @team.people.each do |person| %>
+      <li><%= person.name %><%= select_tag(person.name,  options_from_collection_for_select(overrides_for(person), :option_value, :display_text)) %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<br /><br />
+
+Add Team Member
+<%= form_for @new_person, url: team_members_path(team_id: @team.id) do |f| %>
+  Name: <%= f.text_field :name %>
+  <%= f.submit :Submit %>
+<% end %>
