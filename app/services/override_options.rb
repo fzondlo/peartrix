@@ -16,7 +16,11 @@ class OverrideOptions
   private
 
   def standard_options
-    [OPTION.new(:solo, 'Solo'), OPTION.new(:out_of_office, 'Out of Office')]
+    [
+      OPTION.new('', '-- Select Override --'),
+      OPTION.new(:solo, 'Solo'), 
+      OPTION.new(:out_of_office, 'Out of Office')
+    ]
   end
 
   def team_member_options

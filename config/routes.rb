@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   get '/', to: 'teams#index'
   post '/', to: 'teams#create'
   resources :teams do
-    get 'pairs'
+    post 'pairs'
     resources :members
   end
 end
