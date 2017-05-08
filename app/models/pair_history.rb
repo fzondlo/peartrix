@@ -17,7 +17,6 @@ class PairHistory < ApplicationRecord
     end
   end
 
-
   def self.number_of_times_paired(person_ids)
     person_ids.sort.combination(2).to_a
     sql = <<~SQL 
@@ -29,7 +28,7 @@ class PairHistory < ApplicationRecord
       GROUP BY person1, person2;
     SQL
     results = ActiveRecord::Base.connection.execute(sql)
-    results.each_with_object({}) do |result, memo|
+    results.each_with_object(Hash.new(0)) do |result, memo|
       memo[[result[0],result[1]]] = result[3]
     end
   end

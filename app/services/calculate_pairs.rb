@@ -1,95 +1,65 @@
 class CalculatePairs
   
-  attr_reader :overrides, :team, :people_to_be_paired
+  attr_reader :overrides
   
-  def initialize(overrides:, team:)
+  delegate :team_members, :available_member_ids, 
+           :to => team_with_history
+  
+  def initialize(overrides:, team_model:)
     @overrides = overrides
-    @team = team
+    @team_model = team_model
   end
 
   def pairs
-    @pairs = []
-    create_pairs
-    persist_pairs
+    @pairs ||= begin
+      set_pairs_from_overrides
+      set_odd_person if team_odd?
+      set_best_pairs
+      persist_pairs
+      list_of_pairs
+    end
   end
 
   private
 
-  def possible_pairs_by_id
-    @possible_pairs_by_id ||= people_to_be_paired.each_with_object({}) do |person, memo|
-      memo[person.id] = team_member_ids - [person.id, last_paired_with_by_id(person.id)]
+  def set_pairs_from_overrides
+    #TODO : IMPLEMENT
+  end
+
+  def list_of_pairs
+    @list_of_pairs ||= team_members.each_with_object(Set.new) do |team_member, memo|
+      memo << [team_member, team_member.paired_with].sort_by(&:__id__)
     end
   end
 
-  def people_to_be_paired
-    @people_to_be_paired ||= team_members.to_a
-  end
-
-  def create_pairs
-    sort_possible_pairs_by_possible_combinations
-    while possible_pairs_for_person_by_id = possible_pairs_by_id.shift
-      current_pair_ids = find_and_shift_pair(possible_pairs_for_person_by_id)
-      @pairs << current_pair_ids.map{ |id| team_members_by_id(id) }
-      remove_used_ids_from_remaining_possible_pears
-      sort_possible_pairs_by_possible_combinations
+  def set_best_pairs
+    while members_left_to_pair.any?
+      member1 = team.next_member_to_pair
+      member2 = member1.find_best_pair_from(available_member_ids)
+      team.set_pair(member1, member2)
     end
   end
 
-  def find_and_shift_pair(possible_pairs_for_person_by_id)
-    current_pair_ids = [possible_pairs_for_person_by_id.first]
-    possible_pair_id_matches = possible_pairs_for_person_by_id.last
-    current_pair_ids << find_pair_for(current_pair_ids[0], possible_pair_id_matches)
-    possible_pairs_by_id.delete(current_pair_ids[1])
-    current_pair_ids
+  def available_member_ids
+    members_left_to_pair.map(&:id)
   end
 
-  def remove_used_ids_from_remaining_possible_pears
-    used_ids = @pairs.flatten.map(&:id)
-    possible_pairs_by_id.each do |id, possible_pear_ids|
-      possible_pairs_by_id[id] -= used_ids
-    end
+  def team_odd?
+    members_left_to_pair.odd?  
   end
 
-  def team_members_by_id(id)
-    @team_members_by_id ||= Hash[team_member_ids.zip(team_members)]
-    @team_members_by_id[id]
+  def team
+    @team ||= TeamWithHistory.new(team_model)
   end
 
-  def sort_possible_pairs_by_possible_combinations
-    Hash[possible_pairs_by_id.sort_by{ |_,v| v.count }]
-  end
-
-  def find_pair_for(person_id, possible_pair_ids)
-    possible_pair_ids.min do |pair_id|
-      number_of_times_paired([pair_id, person_id].sort)
-    end
-  end
-  
-  def number_of_times_paired(pair_ids)
-    @number_of_times_paired ||= 
-      PairHistory.number_of_times_paired(team_member_ids)
-    @number_of_times_paired[pair_ids] || 0
-  end
-
-  def last_paired_with_by_id(person_id)
-    @last_paired_with_by_id ||= 
-      PairHistory.last_time_pairing_by_id(team_members.pluck(:id))
-    @last_paired_with_by_id[person_id]
-  end
-
-  def team_member_ids
-    team_members.map(&:id)
-  end
-
-  def team_members
-    @team_members ||= begin
-      members = team.people.to_a
-      members << Person.solo if members.count.odd?
-    end
+  def set_odd_person
+    team_members.reject( |member| member.last_solo? )
+      .min{ |member| member.pair_counts[:solo] }
+      .paired_with(TeamMember.solo)
   end
 
   def persist_pairs
-    @pairs.each do |pair|
+    list_of_pairs.each do |pair|
       PairHistory.create!(person1: pair.first.id, person2: pair.last.id)
     end
   end

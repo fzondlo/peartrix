@@ -1,4 +1,4 @@
-class Person < ApplicationRecord
+class TeamMember < ApplicationRecord
   belongs_to :team
 
   def self.solo
