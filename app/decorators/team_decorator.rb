@@ -1,28 +1,29 @@
-class TeamWithHistory
+class TeamDecorator
 
-  attr_reader :team
+  attr_reader :model
 
-  def initialize(team)
-    @team = team
+  def initialize(model)
+    @model = model
   end
   
   def team_members
-    @team_members ||= team.team_members.to_a.map do |member|
+    @team_members ||= model.team_members.to_a.map do |member|
       TeamMemberDecorator.new(
-        member: member,
+        model: member,
         overrides: {},
-        last_paired_with_id: last_paired_with_by_id(member.id)
+        last_paired_with_id: last_paired_with_by_id(member.id),
         pair_counts: pairing_counts.for(member)
       )
     end
+  end
 
   def members_left_to_pair
     team_members.reject(&:paired?)
   end
 
   def next_member_to_pair
-    team_members.min do |member|
-      (available_member_ids - [member.id, member.last_paired_with_by_id]).count
+    members_left_to_pair.min do |member|
+      (available_member_ids - [member.id, member.last_paired_with_id]).count
     end
   end  
 
@@ -39,11 +40,11 @@ class TeamWithHistory
 
   def last_paired_with_by_id(person_id)
     @last_paired_with_by_id ||= 
-      PairHistory.last_time_pairing_by_id(team.team_members.pluck(:id))
+      PairHistory.last_time_pairing_by_id(model.team_members.pluck(:id) << TeamMember.solo.id)
     @last_paired_with_by_id[person_id]
   end
 
   def pairing_counts
-    @pairing_counts ||= PairingCounts.new(team.team_members)
+    @pairing_counts ||= PairingCounts.new(model.team_members)
   end
 end

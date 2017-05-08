@@ -1,9 +1,9 @@
 class PairingCounts
   
-  attr_reader :team_member_ids, team_members
+  attr_reader :team_member_ids
 
   def initialize(team_members)
-    @team_member_ids = team_members.select(&:id)
+    @team_member_ids = team_members.map(&:id)
   end
 
   def for(team_member)

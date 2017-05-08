@@ -1,10 +1,12 @@
 class TeamMemberDecorator
 
   attr_accessor :paired_with 
-  attr_reader :overrides, :pair_counts, last_paired_with_id
+  attr_reader :overrides, :pair_counts, :last_paired_with_id, :model
+  delegate :id, :name, 
+    :to => :@model
 
   def initialize(model:, pair_counts:, last_paired_with_id:, overrides: {})
-    @paired_with = nil
+    @model = model
     @pair_counts = pair_counts
     @overrides = overrides
     @last_paired_with_id = last_paired_with_id
