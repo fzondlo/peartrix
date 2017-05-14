@@ -1,16 +1,16 @@
 class CalculatePairs
-  
+
   attr_reader :overrides, :team_model
 
   delegate :team_members, :available_member_ids, :members_left_to_pair,
            :to => :team
-  
-  def initialize(overrides:, team_model:)
+
+  def initialize(overrides: {}, team_model:)
     @overrides = overrides
     @team_model = team_model
   end
 
-  def pairs
+ def pairs
     @pairs ||= begin
       set_pairs_from_overrides
       set_odd_person if team_odd?
@@ -23,7 +23,19 @@ class CalculatePairs
   private
 
   def set_pairs_from_overrides
-    #TODO : IMPLEMENT
+    overrides.each_pair do |member1_id, member2_id|
+      member1 = find_member_by_id(member1_id)
+      member2 = case member2_id.try(:to_sym)
+        when :out_of_office then TeamMember.out_of_office
+        when :solo then TeamMember.solo
+        else find_member_by_id(member2_id)
+      end
+      team.set_pair(member1, member2)
+    end
+  end
+
+  def find_member_by_id(id)
+    team_members.find { |member| member.id == id }
   end
 
   def list_of_pairs
@@ -46,7 +58,7 @@ class CalculatePairs
   end
 
   def team_odd?
-    members_left_to_pair.count.odd?  
+    members_left_to_pair.count.odd?
   end
 
   def team
@@ -54,9 +66,13 @@ class CalculatePairs
   end
 
   def set_odd_person
-    team_members.reject(&:last_solo?)
-      .min{ |member| member.pair_counts[:solo] }
-      .paired_with = TeamMember.solo
+    member = if members_left_to_pair.one?
+      members_left_to_pair.first
+    else
+      team_members.reject(&:last_solo?)
+        .min{ |member| member.pair_counts[:solo] }
+    end
+    member.paired_with = TeamMember.solo
   end
 
   def persist_pairs

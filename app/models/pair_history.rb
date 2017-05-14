@@ -10,15 +10,13 @@ class PairHistory < ApplicationRecord
         AND created_at > '#{90.days.ago}'
       GROUP BY person1, person2;
     SQL
-    results = ActiveRecord::Base.connection.execute(sql)
-    results.each_with_object({}) do |result, memo|
-      memo[result[0]] = result[1]
-      memo[result[1]] = result[0]
+    named_results(sql).each_with_object({}) do |row, memo|
+      memo[row[:person1]] = row[:person2]
+      memo[row[:person2]] = row[:person1]
     end
   end
 
   def self.number_of_times_paired(person_ids)
-    person_ids.sort.combination(2).to_a
     sql = <<~SQL 
       SELECT person1, person2, count(*) as count
       FROM pair_histories
@@ -27,13 +25,18 @@ class PairHistory < ApplicationRecord
         AND created_at > '#{90.days.ago}'
       GROUP BY person1, person2;
     SQL
-    results = ActiveRecord::Base.connection.execute(sql)
-    results.each_with_object(Hash.new(0)) do |result, memo|
-      memo[[result[0],result[1]]] = result[3]
+    named_results(sql).each_with_object(Hash.new(0)) do |row, memo|
+      key = [ row[:person1], row[:person2] ]
+      memo[key] = row[:count]
     end
   end
 
   private
+
+  def self.named_results(raw_sql_query)
+    results = ActiveRecord::Base.connection.select_all(raw_sql_query)
+    results.rows.map{ |row| Hash[results.columns.map(&:to_sym).zip(row)] }
+  end
 
   def validate_order
     if person1 > person2

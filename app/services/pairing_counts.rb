@@ -11,7 +11,7 @@ class PairingCounts
       key = case id
       when solo_id then :solo
       when out_of_office_id then :out_of_office
-      else :id
+      else id
       end
       memo[key] = number_of_times_paired([team_member.id, id])
     end
