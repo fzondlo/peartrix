@@ -27,7 +27,7 @@ class TeamsController < ApplicationController
   end
 
   def calculate_pairs_service
-    CalculatePairs.new(overrides, team)
+    CalculatePairs.new(overrides: overrides, team_model: team)
   end
 
   def overrides_for(person)

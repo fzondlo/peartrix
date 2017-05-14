@@ -6,7 +6,7 @@ Members:
 <%= form_tag(team_pairs_path(@team)) do %>
   <ul>
     <% @team.team_members.each do |person| %>
-      <li><%= person.name %><%= select_tag("[overrides]#{person.name}",  options_from_collection_for_select(overrides_for(person), :option_value, :display_text)) %></li>
+      <li><%= person.name %><%= select_tag("[overrides]#{person.id}",  options_from_collection_for_select(overrides_for(person), :option_value, :display_text)) %></li>
     <% end %>
   </ul>
   <%= submit_tag('Make Pairs') %>
