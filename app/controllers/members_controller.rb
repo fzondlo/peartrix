@@ -1,7 +1,7 @@
 class MembersController < ApplicationController
 
   def create
-    team.people.create(name: params.require('person').require('name'))
+    team.team_members.create(name: params.require('team_member').require('name'))
     redirect_to :back
   end
 

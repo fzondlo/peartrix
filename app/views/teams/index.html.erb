@@ -10,7 +10,7 @@
  <% @teams.each do |team| %>
   <tr>
     <td><a href='<%= url_for(team) %>'><%= team.name %></a></td>
-    <td><%= team.people.count %></td>
+    <td><%= team.team_members.count %></td>
   </tr>
  <% end %>
 </table>

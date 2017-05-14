@@ -5,7 +5,7 @@
 Members:
 <%= form_tag(team_pairs_path(@team)) do %>
   <ul>
-    <% @team.people.each do |person| %>
+    <% @team.team_members.each do |person| %>
       <li><%= person.name %><%= select_tag("[overrides]#{person.name}",  options_from_collection_for_select(overrides_for(person), :option_value, :display_text)) %></li>
     <% end %>
   </ul>

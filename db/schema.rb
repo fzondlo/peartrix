@@ -12,21 +12,24 @@
 
 ActiveRecord::Schema.define(version: 20170501133931) do
 
-  create_table "pair_histories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "pair_histories", force: :cascade do |t|
     t.integer "person1", null: false
     t.integer "person2", null: false
     t.integer "team_id", null: false
     t.date    "date",    null: false
   end
 
-  create_table "team_members", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "team_members", force: :cascade do |t|
     t.integer  "team_id",    null: false
     t.string   "name",       null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "teams", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "teams", force: :cascade do |t|
     t.string   "name",       null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

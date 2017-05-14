@@ -17,7 +17,7 @@ class TeamsController < ApplicationController
 
   def show
     team
-    @new_person = Person.new(team_id: team_id)
+    @new_person = TeamMember.new(team_id: team_id)
   end
 
   private
