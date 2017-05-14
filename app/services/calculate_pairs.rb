@@ -17,6 +17,8 @@ class CalculatePairs
       set_best_pairs
       persist_pairs
       list_of_pairs
+#               rescue => e
+#                 binding.pry
     end
   end
 
@@ -29,7 +31,7 @@ class CalculatePairs
       member2 = case member2_id.try(:to_sym)
         when :out_of_office then TeamMember.out_of_office
         when :solo then TeamMember.solo
-        else find_member_by_id(member2_id)
+        else find_member_by_id(member2_id.to_i)
       end
       team.set_pair(member1, member2)
     end
@@ -50,7 +52,11 @@ class CalculatePairs
       member1 = team.next_member_to_pair
       member2_id = member1.find_best_pair_from(available_member_ids)
       member2 = members_left_to_pair.find{|member| member.id == member2_id}
+      begin
       team.set_pair(member1, member2)
+      rescue
+        binding.pry
+      end
     end
   end
 
@@ -70,7 +76,7 @@ class CalculatePairs
     member = if members_left_to_pair.one?
       members_left_to_pair.first
     else
-      team_members.reject(&:last_solo?)
+      members_left_to_pair.reject(&:last_solo?)
         .min{ |member| member.pair_counts[:solo] }
     end
     member.paired_with = TeamMember.solo
