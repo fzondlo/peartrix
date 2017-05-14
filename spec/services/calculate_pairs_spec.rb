@@ -23,16 +23,19 @@ describe CalculatePairs do
     #person1 has been solo 5x
     5.times do
       PairHistory.create(person1: team_members[0].id,
-        person2: TeamMember.solo.id, created_at: 3.days.ago)
+        person2: TeamMember.solo.id, date: 3.days.ago,
+        team_id: team.id)
     end
 
     #person1 paired with person2 together yesterday
     PairHistory.create(person1: team_members[0].id,
-      person2: team_members[1].id, created_at: 1.day.ago)
+      person2: team_members[1].id, date: 1.day.ago,
+      team_id: team.id)
 
     #person3 solo'd yesterday
     PairHistory.create(person1: team_members[2].id,
-      person2: TeamMember.solo.id, created_at: 1.days.ago)
+      person2: TeamMember.solo.id, date: 1.days.ago,
+      team_id: team.id)
 
     pairs_by_name = subject.pairs.map{ |x| x.map(&:name) }
     expect(pairs_by_name).to include(['Person 1', 'Person 3'], ['Person 2', 'solo'])
@@ -40,7 +43,9 @@ describe CalculatePairs do
 
   it 'ensures different pairs from yesterday' do
     10.times do
-      PairHistory.create(person1: team_members[0].id, person2: team_members[1].id)
+      PairHistory.create(person1: team_members[0].id,
+                         person2: team_members[1].id,
+                         team_id: team.id, date: 3.days.ago)
       expect(subject.pairs).not_to include([team_members[0], team_members[1]])
       PairHistory.delete_all
     end
@@ -52,12 +57,14 @@ describe CalculatePairs do
       #person1 has been solo 5x
       5.times do
         PairHistory.create(person1: team_members[0].id,
-                           person2: TeamMember.solo.id, created_at: 3.days.ago)
+                           person2: TeamMember.solo.id, date: 3.days.ago,
+                           team_id: team.id)
       end
 
       #person1 paired with person2 together yesterday
       PairHistory.create(person1: team_members[0].id,
-                         person2: team_members[1].id, created_at: 1.day.ago)
+                         person2: team_members[1].id, date: 1.day.ago,
+                         team_id: team.id)
     end
 
     context 'person 1 is overrriden to solo' do
@@ -83,5 +90,12 @@ describe CalculatePairs do
         expect(pairs_by_name).to include(['Person 1', 'Person 2'], ['Person 3', 'solo'])
       end
     end
+  end
+
+  it 'ensures only one date history is preserved per day' do
+    3.times do
+      described_class.new(overrides: overrides, team_model: team).pairs
+    end
+    expect(PairHistory.count).to eq 2
   end
 end

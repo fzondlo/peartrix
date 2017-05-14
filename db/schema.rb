@@ -13,10 +13,10 @@
 ActiveRecord::Schema.define(version: 20170501133931) do
 
   create_table "pair_histories", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "person1"
-    t.integer  "person2"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer "person1", null: false
+    t.integer "person2", null: false
+    t.integer "team_id", null: false
+    t.date    "date",    null: false
   end
 
   create_table "team_members", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|

@@ -2,6 +2,8 @@ class TeamDecorator
 
   attr_reader :model
 
+  delegate :id, to: :model
+
   def initialize(model)
     @model = model
   end
