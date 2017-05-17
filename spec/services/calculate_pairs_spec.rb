@@ -121,4 +121,26 @@ describe CalculatePairs do
       end
     end
   end
+
+  context '5 person team' do
+
+    let(:total_team_members) { 5 }
+
+    it 'pairs people evenly over time' do
+      90.downto(1).each do |i|
+        $a = true if i < 5
+        Timecop.freeze(i.days.ago) do
+          described_class.new(overrides: overrides, team_model: team).pairs
+        end
+      end
+      team_member_ids = Team.first.team_members.pluck(:id)
+      team_pair_counts = PairHistory.number_of_times_paired(team_member_ids).values
+      base_min = team_pair_counts.first.to_f * 0.7
+      base_max = team_pair_counts.first.to_f * 1.3
+      team_pair_counts.each do |count|
+        expect(count >= base_min).to be true
+        expect(count <= base_max).to be true
+      end
+    end
+  end
 end

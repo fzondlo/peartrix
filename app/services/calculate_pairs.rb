@@ -70,7 +70,7 @@ class CalculatePairs
       members_left_to_pair.first
     else
       members_left_to_pair.reject(&:last_solo?)
-        .min{ |member| member.pair_counts[:solo] }
+        .min_by{ |member| member.pair_counts[:solo] }
     end
     member.paired_with = TeamMember.solo
   end
