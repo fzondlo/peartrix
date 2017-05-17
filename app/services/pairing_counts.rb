@@ -16,6 +16,19 @@ class PairingCounts
       memo[key] = number_of_times_paired([team_member.id, id])
     end
   end
+
+  def lowest_count_for(team_member_id)
+    @lowest_count_for ||= team_member_pair_count.each_with_object({}) do |(pair, count), memo|
+      if memo[pair.first].nil? || memo[pair.first] > count
+        memo[pair.first] = count
+      end
+
+      if memo[pair.last].nil? || memo[pair.last] > count
+        memo[pair.last] = count
+      end
+    end
+    @lowest_count_for[team_member_id]
+  end
   
   private
 
@@ -31,9 +44,11 @@ class PairingCounts
     (team_member_ids + [solo_id, out_of_office_id]) - [team_member.id] 
   end
 
+  def team_member_pair_count
+    @team_member_pair_count ||= PairHistory.number_of_times_paired(team_member_ids)
+  end
+
   def number_of_times_paired(pair_ids)
-    @number_of_times_paired ||= 
-      PairHistory.number_of_times_paired(team_member_ids)
-    @number_of_times_paired[pair_ids.sort]
+    team_member_pair_count[pair_ids.sort]
   end
 end

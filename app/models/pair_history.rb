@@ -3,16 +3,24 @@ class PairHistory < ApplicationRecord
 
   def self.last_time_pairing_by_id(person_ids)
     sql = <<~SQL
-      SELECT person1, person2, max(date) as timestamp
+      SELECT person1, person2, max(date) as cur_date
       FROM pair_histories
       WHERE (person1 in (#{person_ids.join(',')})
         AND person2 in (#{person_ids.join(',')}))
         AND date > '#{90.days.ago}'
       GROUP BY person1, person2;
     SQL
+
+    # {1: {paired_with: 2, on: 2/3/2015}}
     named_results(sql).each_with_object({}) do |row, memo|
-      memo[row[:person1]] = row[:person2]
-      memo[row[:person2]] = row[:person1]
+      date = Date.parse row[:cur_date]
+      if memo[row[:person1]].nil? || memo[row[:person1]][:on] < date
+        memo[row[:person1]] = {paired_with: row[:person2], on: date}
+      end
+
+      if memo[row[:person2]].nil? || memo[row[:person2]][:on] < date
+        memo[row[:person2]] = {paired_with: row[:person1], on: date}
+      end
     end
   end
 

@@ -23,7 +23,7 @@ class CalculatePairs
 
   def set_pairs_from_overrides
     overrides.each_pair do |member1_id, member2_id|
-      next if member2_id.empty?
+      next if member2_id == ''
       member1 = find_member_by_id(member1_id.to_i)
       member2 = case member2_id.try(:to_sym)
         when :out_of_office then TeamMember.out_of_office
@@ -52,7 +52,6 @@ class CalculatePairs
       team.set_pair(member1, member2)
     end
   end
-
 
   def available_member_ids
     members_left_to_pair.map(&:id)

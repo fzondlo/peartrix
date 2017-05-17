@@ -24,9 +24,11 @@ class TeamDecorator
   end
 
   def next_member_to_pair
-    members_left_to_pair.min do |member|
-      (available_member_ids - [member.id, member.last_paired_with_id]).count
+    members_by_pair_count = members_left_to_pair.each_with_object(Hash.new{|h,v| h[v] = []}) do |member, memo|
+      memo[pairing_counts.lowest_count_for(member)] << member
     end
+    min_pair_count = members_by_pair_count.keys.min
+    members_by_pair_count[min_pair_count].sample
   end
 
   def available_member_ids
@@ -45,7 +47,7 @@ class TeamDecorator
   def last_paired_with_by_id(person_id)
     @last_paired_with_by_id ||=
       PairHistory.last_time_pairing_by_id(model.team_members.pluck(:id) << TeamMember.solo.id)
-    @last_paired_with_by_id[person_id]
+    @last_paired_with_by_id.dig(person_id, :paired_with)
   end
 
   def pairing_counts

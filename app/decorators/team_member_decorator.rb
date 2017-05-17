@@ -21,9 +21,9 @@ class TeamMemberDecorator
   end
 
   def find_best_pair_from(available_member_ids)
-    available_member_ids -= [self.id]
+    available_member_ids -= [self.id] #don't pair with yourself
     return available_member_ids.first if available_member_ids.one?
-    (available_member_ids - [last_paired_with_id]).min do |id|
+    (available_member_ids - [last_paired_with_id]).min_by do |id|
       pair_counts[id]
     end
   end
