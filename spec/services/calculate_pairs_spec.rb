@@ -106,7 +106,6 @@ describe CalculatePairs do
 
     it 'pairs people evenly over time' do
       90.downto(1).each do |i|
-        $a = true if i < 5
         Timecop.freeze(i.days.ago) do
           described_class.new(overrides: overrides, team_model: team).pairs
         end
@@ -128,7 +127,6 @@ describe CalculatePairs do
 
     it 'pairs people evenly over time' do
       90.downto(1).each do |i|
-        $a = true if i < 5
         Timecop.freeze(i.days.ago) do
           described_class.new(overrides: overrides, team_model: team).pairs
         end
