@@ -16,9 +16,6 @@ class CalculatePairs
       set_odd_person if team_odd?
       set_best_pairs
       persist_pairs
-      list_of_pairs
-#               rescue => e
-#                 binding.pry
     end
   end
 
@@ -52,13 +49,10 @@ class CalculatePairs
       member1 = team.next_member_to_pair
       member2_id = member1.find_best_pair_from(available_member_ids)
       member2 = members_left_to_pair.find{|member| member.id == member2_id}
-      begin
       team.set_pair(member1, member2)
-      rescue
-        binding.pry
-      end
     end
   end
+
 
   def available_member_ids
     members_left_to_pair.map(&:id)

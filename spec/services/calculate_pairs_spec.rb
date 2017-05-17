@@ -5,8 +5,9 @@ describe CalculatePairs do
   subject { described_class.new(overrides: overrides, team_model: team) }
   let(:team) { Team.create( name: 'team' ) }
   let!(:team_members) do
-    (1..3).map { |index| team.team_members.create(name: "Person #{index}") }
+    (1..total_team_members).map { |index| team.team_members.create(name: "Person #{index}") }
   end
+  let(:total_team_members) { 3 }
   let(:overrides) { {} }
 
   it 'creates pairs of two' do
@@ -97,5 +98,26 @@ describe CalculatePairs do
       described_class.new(overrides: overrides, team_model: team).pairs
     end
     expect(PairHistory.count).to eq 2
+  end
+
+  context '10 person team' do
+
+    let(:total_team_members) { 10 }
+
+    it 'pairs people evenly over time' do
+      90.downto(1).each do |i|
+        Timecop.freeze(i.days.ago) do
+          described_class.new(overrides: overrides, team_model: team).pairs
+        end
+      end
+      team_member_ids = Team.first.team_members.pluck(:id)
+      team_pair_counts = PairHistory.number_of_times_paired(team_member_ids).values
+      base_min = team_pair_counts.first.to_f * 0.9
+      base_max = team_pair_counts.first.to_f * 1.1
+      team_pair_counts.each do |count|
+        expect(count >= base_min).to be true
+        expect(count <= base_max).to be true
+      end
+    end
   end
 end

@@ -36,6 +36,8 @@ gem 'jbuilder', '~> 2.5'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+gem 'timecop'
+
 group :development, :test do
   gem 'pry'
   gem 'pry-rails'
