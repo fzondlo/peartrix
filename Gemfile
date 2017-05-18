@@ -44,7 +44,8 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.5'
 end
 
-
+gem 'rest-client'
+gem 'mailgun-ruby'
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
