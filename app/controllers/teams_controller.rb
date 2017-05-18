@@ -1,3 +1,5 @@
+require 'mailgun'
+
 class TeamsController < ApplicationController
   helper_method :overrides_for
 
@@ -13,14 +15,28 @@ class TeamsController < ApplicationController
 
   def pairs
     @pairs = calculate_pairs_service.pairs
+    send_email
   end
 
   def show
-    team
+    team #set instance variable
     @new_person = TeamMember.new(team_id: team_id)
   end
 
   private
+
+  def send_email
+    mg_client = Mailgun::Client.new 'key-c7fa511f484c6c8c038a6de70c212a0a'
+    message_params = {:from    => 'peartrix@herokuapp.com',
+                      :to      => 'fzondlo@gmail.com',
+                      :subject => "Pairs for #{team.name} - #{Date.today}",
+                      :text    => email_text}
+    mg_client.send_message 'app03158b70ec6646fe8ae0d6115e0219e3.mailgun.org', message_params
+  end
+
+  def email_text
+    @pairs.map { |p| "#{p.first.name} - #{p.last.name}" }.join("\n")
+  end
 
   def overrides
     params.require('overrides')
@@ -46,3 +62,5 @@ class TeamsController < ApplicationController
     params.require(:new_team).require(:name)
   end
 end
+
+
