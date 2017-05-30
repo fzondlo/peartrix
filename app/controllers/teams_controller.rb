@@ -14,8 +14,8 @@ class TeamsController < ApplicationController
   end
 
   def pairs
-    send_email
     @pairs = calculate_pairs_service.pairs
+    send_email
   end
 
   def show
@@ -35,7 +35,7 @@ class TeamsController < ApplicationController
   end
 
   def email_text
-    pairs.map { |p| "#{p.first.name} - #{p.last.name}" }.join("\n")
+    @pairs.map { |p| "#{p.first.name} - #{p.last.name}" }.join("\n")
   end
 
   def overrides
