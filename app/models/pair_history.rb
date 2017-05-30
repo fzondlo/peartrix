@@ -39,6 +39,16 @@ class PairHistory < ApplicationRecord
     end
   end
 
+  def self.number_of_times_paired_by_name(person_ids)
+    results_by_id = number_of_times_paired(person_ids)
+    persons = TeamMember.where(id: [person_ids]).to_a
+    names_by_id = Hash[persons.map(&:id).zip(persons.map(&:name))]
+    results_by_id.each_pair.with_object({}) do |(key, value), memo|
+      name1, name2 = names_by_id[key.first], names_by_id[key.last]
+      memo[[name1, name2]] = value
+    end
+  end
+
   private
 
   def self.named_results(raw_sql_query)
