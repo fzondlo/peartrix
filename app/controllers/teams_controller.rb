@@ -23,7 +23,15 @@ class TeamsController < ApplicationController
     @new_person = TeamMember.new(team_id: team_id)
   end
 
+  def show_history
+    @number_of_times_paired_by_name = number_of_times_paired_by_name
+  end
+
   private
+
+  def number_of_times_paired_by_name
+    PairHistory.number_of_times_paired_by_name(team.team_members.pluck(:id))
+  end
 
   def send_email
     mg_client = Mailgun::Client.new 'key-c7fa511f484c6c8c038a6de70c212a0a'
