@@ -12,6 +12,7 @@ class CalculatePairs
 
  def pairs
     @pairs ||= begin
+      delete_same_day_team_history_if_exists
       set_pairs_from_overrides
       set_odd_person if team_odd?
       set_best_pairs
@@ -20,6 +21,10 @@ class CalculatePairs
   end
 
   private
+
+  def delete_same_day_team_history_if_exists
+    PairHistory.where(team_id: team.id, date: Date.today).delete_all
+  end
 
   def set_pairs_from_overrides
     overrides.each_pair do |member1_id, member2_id|
@@ -76,7 +81,6 @@ class CalculatePairs
   end
 
   def persist_pairs
-    PairHistory.where(team_id: team.id, date: Date.today).delete_all
     list_of_pairs.each do |pair|
       PairHistory.create!(team_id: team.id, person1: pair.first.id, person2: pair.last.id, date: Date.today)
     end

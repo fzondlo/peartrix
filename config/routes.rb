@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   post '/', to: 'teams#create'
   resources :teams do
     post 'pairs'
+    get 'show_history'
     resources :members
   end
 end
