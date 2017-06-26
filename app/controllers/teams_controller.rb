@@ -14,8 +14,7 @@ class TeamsController < ApplicationController
   end
 
   def pairs
-    calculate_pairs_service.pairs
-    send_email
+    send_email(calculate_pairs_service.pairs)
     redirect_to action: :show, id: team_id
   end
 
@@ -38,18 +37,18 @@ class TeamsController < ApplicationController
     PairHistory.number_of_times_paired_by_name(team.team_members.pluck(:id))
   end
 
-  def send_email
+  def send_email(pairs)
     return if Rails.env.development?
     mg_client = Mailgun::Client.new 'key-c7fa511f484c6c8c038a6de70c212a0a'
     message_params = {:from    => 'peartrix@herokuapp.com',
                       :to      => 'fzondlo@gmail.com',
                       :subject => "Pairs for #{team.name} - #{Date.today}",
-                      :text    => email_text}
+                      :text    => email_text(pairs)}
     mg_client.send_message 'app03158b70ec6646fe8ae0d6115e0219e3.mailgun.org', message_params
   end
 
-  def email_text
-    @pairs.map { |p| "#{p.first.name} - #{p.last.name}" }.join("\n")
+  def email_text(pairs)
+    pairs.map { |p| "#{p.first.name} - #{p.last.name}" }.join("\n")
   end
 
   def overrides
