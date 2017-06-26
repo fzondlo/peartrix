@@ -14,8 +14,9 @@ class TeamsController < ApplicationController
   end
 
   def pairs
-    @pairs = calculate_pairs_service.pairs
+    calculate_pairs_service.pairs
     send_email
+    redirect_to action: :show, id: team_id
   end
 
   def show
