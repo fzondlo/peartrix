@@ -2,6 +2,20 @@
 
 <h1>Team <%= @team.name %></h1>
 
+<% if @todays_pairs.any? %>
+  <h2>Today's Pears</h2>
+  <% @todays_pairs.each do |pair| %>
+      <%= pair.first.name %>
+      - paired with -
+      <%= pair.last.name %>
+      <br />
+  <% end %>
+
+  <h2>Update Pears Today</h2>
+<% end %>
+
+
+
 Members:
 <%= form_tag(team_pairs_path(@team)) do %>
   <ul>

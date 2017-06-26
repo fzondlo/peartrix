@@ -19,7 +19,7 @@ class TeamsController < ApplicationController
   end
 
   def show
-    team #set instance variable
+    @todays_pairs = todays_pairs
     @new_person = TeamMember.new(team_id: team_id)
   end
 
@@ -29,11 +29,16 @@ class TeamsController < ApplicationController
 
   private
 
+  def todays_pairs
+    TodaysPairs.new(team: team).pairs
+  end
+
   def number_of_times_paired_by_name
     PairHistory.number_of_times_paired_by_name(team.team_members.pluck(:id))
   end
 
   def send_email
+    return if Rails.env.development?
     mg_client = Mailgun::Client.new 'key-c7fa511f484c6c8c038a6de70c212a0a'
     message_params = {:from    => 'peartrix@herokuapp.com',
                       :to      => 'fzondlo@gmail.com',
