@@ -1,25 +1,33 @@
-<%= image_tag('pear-programming.png') %>
+<div class="columns">
+  <div class="column is-one-half">
+    <h3 class="title">Teams</h3>
+    <table class="table is-fullwidth">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Members</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% @teams.each do |team| %>
+          <tr>
+            <td><a href='<%= url_for(team) %>'><%= team.name %></a></td>
+            <td class="has-text-centered"><%= team.team_members.count %></td>
+          </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="column is-one-half">
+    <h3 class="title">Add Team</h3>
+      <%= form_for :new_team do |f| %>
+        <div class="field">
+          <%= f.label :name, class: 'label' %>
+          <div class="control">
+            <%= f.text_field :name, class: 'input is-one-third', placeholder: 'Team Rocket' %>
+          </div>
+        </div>
+      <% end %>
+  </div>
+</div>
 
-
-<br />
-
-<table>
- <tr>
-   <th>Team Name</th>
-   <th>Team Members</th>
- </tr>
- <% @teams.each do |team| %>
-  <tr>
-    <td><a href='<%= url_for(team) %>'><%= team.name %></a></td>
-    <td><%= team.team_members.count %></td>
-  </tr>
- <% end %>
-</table>
-
-<br /><br />
-
-Add Team
-<%= form_for :new_team do |f| %>
-  Team Name: <%= f.text_field :name %>
-  <%= f.submit :Submit %>
-<% end %>
