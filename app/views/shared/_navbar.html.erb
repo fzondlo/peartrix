@@ -11,7 +11,9 @@
       <div class="navbar-item has-dropdown is-hoverable">
         <div class="navbar-link">Pairing History</div>
         <div class="navbar-dropdown">
-          <!--add teams here-->
+          <% all_teams.each do |team| %>
+            <%= link_to team.name, "/teams/#{team.id}/show_history", class: 'navbar-item' %>
+          <% end %>
         </div>
       </div>
     </div>
