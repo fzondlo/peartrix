@@ -2,6 +2,8 @@
 
 A rails app for managing team pairing rotations, inspired by [jgeiger/pairtrix](https://github.com/jgeiger/pairtrix).
 
+[Hosted Here](http://peartrix.herokuapp.com/)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
