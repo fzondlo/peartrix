@@ -4,6 +4,7 @@ class TeamsController < ApplicationController
   helper_method :overrides_for
 
   def index
+    @homepage = true
     @teams = Team.all
     @new_team = Team.new
   end

@@ -1,12 +1,9 @@
-<%= image_tag('pear-programming.png') %>
-
-
-<br />
-
-<table>
+<%= render 'shared/i_in_pear' %>
+<h2>Select Team: </h2>
+<table class='table' style='width: 50%'>
  <tr>
-   <th>Team Name</th>
-   <th>Team Members</th>
+   <th><h4>Team Name</h4></th>
+   <th><h4>Team Members</h4></th>
  </tr>
  <% @teams.each do |team| %>
   <tr>
@@ -18,8 +15,10 @@
 
 <br /><br />
 
-Add Team
+<hr />
+
+<h3>Create a New Team:</h3>
 <%= form_for :new_team do |f| %>
-  Team Name: <%= f.text_field :name %>
-  <%= f.submit :Submit %>
+  <%= f.text_field :name, class: 'form-control create-team-btn', placeholder: 'Team Name' %>
+  <%= f.submit :Submit, class: 'btn btn-primary' %>
 <% end %>

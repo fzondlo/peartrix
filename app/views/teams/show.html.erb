@@ -1,43 +1,51 @@
-<%= image_tag('pear-programming.png') %>
+<%= render 'shared/i_in_pear' %>
+<div style='position: relative; width: 50%'>
+  <h2 style='display: inline-block'><%= @team.name %></h2>
+  <div style='bottom: 10px; right: 0; position: absolute'>
+    <a href="/teams/<%=@team.id%>/show_history">See Pair History</a>
+  </div>
+</div>
 
-<h1>Team <%= @team.name %></h1>
 
 <% if @todays_pairs.any? %>
-  <h2>Today's Pears</h2>
+  <hr style='width: 50%; display: inline-block' />
+  <h3>Today's Pairs</h3>
   <% @todays_pairs.each do |pair| %>
       <%= pair.first.name %>
       - paired with -
       <%= pair.last.name %>
       <br />
   <% end %>
+  <hr style='width: 50%; display: inline-block' />
 
-  <h2>Update Pears Today</h2>
+  <h3>Update Pairs</h3>
 <% end %>
 
-
-
-Members:
 <%= form_tag(team_pairs_path(@team)) do %>
-  <ul>
-    <% @team.team_members.each do |person| %>
-      <li><%= person.name %><%= select_tag("[overrides]#{person.id}",  options_from_collection_for_select(overrides_for(person), :option_value, :display_text)) %></li>
-    <% end %>
-  </ul>
-  <%= submit_tag('Make Pairs') %>
+  <table class='table' style='width: 50%'>
+    <tr>
+      <th><h4>Team member</h4></th>
+      <th><h4>Manually pair with</h4></th>
+    </tr>
+      <% @team.team_members.each do |person| %>
+        <tr>
+          <td><%= person.name %></td>
+          <td><%= select_tag("[overrides]#{person.id}",  options_from_collection_for_select(overrides_for(person), :option_value, :display_text)) %></td>
+        </tr>
+      <% end %>
+    <tr>
+
+    </tr>
+  </table>
+  <%= submit_tag 'Make Pairs', class: 'btn btn-primary' %>
 <% end %>
+
+<hr style='width: 50%; display: inline-block' />
 
 <br /><br />
 
-Add Team Member
+<h3>Add Team Member</h3>
 <%= form_for @new_person, url: team_members_path(team_id: @team.id) do |f| %>
-  Name: <%= f.text_field :name %>
-  <%= f.submit :Submit %>
+  <%= f.text_field :name, class: 'form-control create-team-btn', placeholder: 'Name' %>
+  <%= f.submit :Submit, class: 'btn btn-secondary' %>
 <% end %>
-
-
-
-<br />
-<br />
-<br />
-
-<a href="/teams/<%=@team.id%>/show_history">Pairing History</a>

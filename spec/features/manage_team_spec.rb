@@ -10,6 +10,6 @@ feature 'Team Member Management', :type => :feature do
     expect(find('td a').text).to eq(team_name)
 
     click_link(team_name)
-    expect(find('h1').text).to eq("Team #{team_name}")
+    expect(find('h2').text).to eq(team_name)
   end
 end
