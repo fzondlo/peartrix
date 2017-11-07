@@ -1,15 +1,27 @@
 require 'rails_helper'
 
 feature 'Team management', :type => :feature do
-  let(:team_name) { 'Some Team' }
+  let!(:team)        { Team.create(name: 'x', id: 1) }
+  let!(:team_member) { team.team_members.create(name: 'Chris') }
 
-  scenario 'User creates a new team' do
-    visit '/'
-    fill_in 'new_team_name', with: team_name
+  before do
+    visit 'teams/1/'
+  end
+
+  scenario 'adds team member' do
+    expect(page).not_to have_content('John')
+    fill_in 'team_member_name', with: 'John'
     click_button 'Submit'
-    expect(find('td a').text).to eq(team_name)
+    expect(page).to have_content('John')
+  end
 
-    click_link(team_name)
-    expect(find('h2').text).to eq(team_name)
+  scenario 'archives / deletes team member' do
+    expect(page).to have_content('Chris')
+    find(:css, 'a[data-confirm]').click
+    expect(page).not_to have_content('Chris')
+  end
+
+  scenario 'calculates pairs' do
+    #TODO!
   end
 end

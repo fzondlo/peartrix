@@ -6,7 +6,6 @@
   </div>
 </div>
 
-
 <% if @todays_pairs.any? %>
   <hr style='width: 50%; display: inline-block' />
   <h3>Today's Pairs</h3>
@@ -26,11 +25,17 @@
     <tr>
       <th><h4>Team member</h4></th>
       <th><h4>Manually pair with</h4></th>
+      <th><h4>Archive</h4></th>
     </tr>
       <% @team.team_members.each do |person| %>
         <tr>
           <td><%= person.name %></td>
           <td><%= select_tag("[overrides]#{person.id}",  options_from_collection_for_select(overrides_for(person), :option_value, :display_text)) %></td>
+          <td><%= link_to '<i class="fa fa-ban fa-fw"></i>'.html_safe,
+                          "/teams/#{@team.id}/members/#{person.id}",
+                          data: { confirm: "You sure you want to archive #{person.name}?",
+                                  method: 'delete' } %>
+          </td>
         </tr>
       <% end %>
     <tr>

@@ -8,7 +8,20 @@ class MembersController < ApplicationController
   def show
   end
 
+  def destroy
+    team_member.update_attributes!(archived: true)
+    redirect_to :back
+  end
+
   private
+
+  def team_member
+    @team_member ||= TeamMember.find(team_member_id)
+  end
+
+  def team_member_id
+    params.require(:id)
+  end
 
   def team
     @team ||= Team.find(team_id)

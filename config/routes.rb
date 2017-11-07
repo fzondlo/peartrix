@@ -1,11 +1,11 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-
   get '/', to: 'teams#index'
   post '/', to: 'teams#create'
-  resources :teams do
+
+  resources :teams, only: [:index, :create, :show] do
     post 'pairs'
     get 'show_history'
-    resources :members
+
+    resources :members, only: [:create, :show, :destroy]
   end
 end
