@@ -1,15 +1,15 @@
 <%= render 'shared/i_in_pear' %>
 <div style='position: relative; width: 50%'>
-  <h2 style='display: inline-block'><%= @team.name %></h2>
+  <h2 style='display: inline-block'><%= team.name %></h2>
   <div style='bottom: 10px; right: 0; position: absolute'>
-    <a href="/teams/<%=@team.id%>/show_history">See Pair History</a>
+    <a href="/teams/<%=team.id%>/show_history">See Pair History</a>
   </div>
 </div>
 
-<% if @todays_pairs.any? %>
+<% if todays_pairs.any? %>
   <hr style='width: 50%; display: inline-block' />
   <h3>Today's Pairs</h3>
-  <% @todays_pairs.each do |pair| %>
+  <% todays_pairs.each do |pair| %>
       <%= pair.first.name %>
       - paired with -
       <%= pair.last.name %>
@@ -20,19 +20,19 @@
   <h3>Update Pairs</h3>
 <% end %>
 
-<%= form_tag(team_pairs_path(@team)) do %>
+<%= form_tag(team_pairs_path(team)) do %>
   <table class='table' style='width: 50%'>
     <tr>
       <th><h4>Team member</h4></th>
       <th><h4>Manually pair with</h4></th>
       <th><h4>Archive</h4></th>
     </tr>
-      <% @team.team_members.each do |person| %>
+      <% team.team_members.each do |person| %>
         <tr>
           <td><%= person.name %></td>
           <td><%= select_tag("[overrides]#{person.id}",  options_from_collection_for_select(overrides_for(person), :option_value, :display_text)) %></td>
           <td><%= link_to '<i class="fa fa-ban fa-fw"></i>'.html_safe,
-                          "/teams/#{@team.id}/members/#{person.id}",
+                          "/teams/#{team.id}/members/#{person.id}",
                           data: { confirm: "You sure you want to archive #{person.name}?",
                                   method: 'delete' } %>
           </td>
@@ -50,7 +50,7 @@
 <br /><br />
 
 <h3>Add Team Member</h3>
-<%= form_for @new_person, url: team_members_path(team_id: @team.id) do |f| %>
+<%= form_for @new_person, url: team_members_path(team_id: team.id) do |f| %>
   <%= f.text_field :name, class: 'form-control create-team-btn', placeholder: 'Name' %>
   <%= f.submit :Submit, class: 'btn btn-secondary' %>
 <% end %>

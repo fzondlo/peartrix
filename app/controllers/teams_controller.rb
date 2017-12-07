@@ -20,20 +20,18 @@ class TeamsController < ApplicationController
   end
 
   def show
-    @todays_pairs = todays_pairs
     @new_person = TeamMember.new(team_id: team_id)
   end
 
-  def show_history
-    @number_of_times_paired_by_name = number_of_times_paired_by_name
-  end
 
   private
 
+  helper_method :todays_pairs
   def todays_pairs
     TodaysPairs.new(team: team).pairs
   end
 
+  helper_method :number_of_times_paired_by_name
   def number_of_times_paired_by_name
     PairHistory.number_of_times_paired_by_name(team.team_members.pluck(:id))
   end
@@ -64,6 +62,7 @@ class TeamsController < ApplicationController
     OverrideOptions.new(team, person).options
   end
 
+  helper_method :team
   def team
     @team ||= Team.find(team_id)
   end
