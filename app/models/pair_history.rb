@@ -51,6 +51,20 @@ class PairHistory < ApplicationRecord
     end
   end
 
+  def self.pair_history_per_person(team)
+    ids = team.team_members.pluck(:id)
+    ungrouped_pairs = number_of_times_paired_by_name(ids)
+    members =  team.members_including_statuses.pluck(:name)
+
+    pairs_by_person = Hash[members.map {|x| [x, Hash[members.map {|x| [x, 0] }]] }]
+
+    ungrouped_pairs.each_pair do |(person, pair), count|
+      pairs_by_person[person][pair] = count
+    end
+
+    pairs_by_person
+  end
+
   private
 
   def self.named_results(raw_sql_query)

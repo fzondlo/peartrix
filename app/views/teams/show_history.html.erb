@@ -1,4 +1,21 @@
-<% number_of_times_paired_by_name.each_pair do |(person1, person2), count| %>
-    <%= person1 %> paired with <%= person2 %> - <%= count %>x
-  <br />
-<% end %>
+<h2>Pair History for <%= team.name %></h2>
+<table class="table table-striped table-sm table-hover">
+  <thead>
+    <tr>
+      <th></th>
+      <% team_members.each do |member| %>
+          <th><%= member.name %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% pair_history_per_person.each_pair do |person, pairs| %>
+      <tr>
+        <td><%= person %></td>
+        <% pairs.each_pair do |pair, count| %>
+          <td><%= count %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
