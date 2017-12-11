@@ -13,7 +13,13 @@
       <tr>
         <td><%= person %></td>
         <% pairs.each_pair do |pair, count| %>
-          <td><%= count %></td>
+          <td>
+            <% if count > 0 %>
+              <strong><%= count %></strong>
+            <% else %>
+              <small>x</small>
+            <% end %>
+          </td>
         <% end %>
       </tr>
     <% end %>
