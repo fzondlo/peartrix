@@ -7,21 +7,26 @@
 </div>
 
 <% if todays_pairs.any? %>
-  <hr style='width: 50%; display: inline-block' />
   <h3>Today's Pairs</h3>
-  <% todays_pairs.each do |pair| %>
-      <%= pair.first.name %>
-      - paired with -
-      <%= pair.last.name %>
-      <br />
-  <% end %>
-  <hr style='width: 50%; display: inline-block' />
+    <table class="table" style='width: 50%'>
+      <tbody>
+        <% todays_pairs.each do |pair| %>
+          <tr>
+            <td><%= pair.first.name %></td>
+            <td><i class="fa fa-arrow-right"></i></td>
+            <td><%= pair.last.name %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <br />
+    <br />
 
-  <h3>Update Pairs</h3>
+    <h3>Update Pairs</h3>
 <% end %>
 
 <%= form_tag(team_pairs_path(team)) do %>
-  <table class='table' style='width: 50%'>
+  <table class='table'>
     <tr>
       <th><h4>Team member</h4></th>
       <th><h4>Manually pair with</h4></th>
