@@ -37,17 +37,18 @@ class TeamsController < ApplicationController
   
   helper_method :todays_pairs
   def todays_pairs
-    TodaysPairs.new(team: team).pairs
+    @todays_pairs ||= TodaysPairs.new(team: team).pairs
   end
 
   helper_method :number_of_times_paired_by_name
   def number_of_times_paired_by_name
-    PairHistory.number_of_times_paired_by_name(team.team_members.pluck(:id))
+    @number_of_times_paired_by_name ||=
+      PairHistory.number_of_times_paired_by_name(team.team_members.pluck(:id))
   end
 
-  helper_method :pair_history_per_person
-  def pair_history_per_person
-    PairHistory.pair_history_per_person(team)
+  helper_method :pair_matrix_per_person
+  def pair_matrix_per_person
+    @pair_matrix_per_person ||= PairHistory.pair_matrix_per_person(team)
   end
 
   def send_email(pairs)

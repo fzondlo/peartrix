@@ -1,6 +1,8 @@
 class PairHistory < ApplicationRecord
   before_validation :validate_order
 
+  # example return:
+  # {1: {paired_with: 2, on: 2/3/2015}, 2: {paired_with: 1, on: 2/3/2015}}
   def self.last_time_pairing_by_id(person_ids)
     sql = <<~SQL
       SELECT person1, person2, max(date) as cur_date
@@ -11,7 +13,6 @@ class PairHistory < ApplicationRecord
       GROUP BY person1, person2;
     SQL
 
-    # {1: {paired_with: 2, on: 2/3/2015}}
     named_results(sql).each_with_object({}) do |row, memo|
       date = Date.parse row[:cur_date]
       if memo[row[:person1]].nil? || memo[row[:person1]][:on] < date
@@ -24,6 +25,10 @@ class PairHistory < ApplicationRecord
     end
   end
 
+  # example return:
+  # {[5, 21]=>1, [21, 22]=>1}
+  # this gives you a hash with the keys as the two person's ids in
+  # an array and the value is the number of times paired
   def self.number_of_times_paired(person_ids)
     sql = <<~SQL
       SELECT person1, person2, count(*) as count
@@ -39,6 +44,10 @@ class PairHistory < ApplicationRecord
     end
   end
 
+  # example return:
+  # {["solo", "b"]=>1, ["b", "a"]=>1}
+  # this gives you a hash with the keys as the two person's names
+  # in an array and the value is the number of times paired
   def self.number_of_times_paired_by_name(person_ids)
     results_by_id = number_of_times_paired(person_ids)
     out_of_office_id = TeamMember.out_of_office.id
@@ -51,15 +60,23 @@ class PairHistory < ApplicationRecord
     end
   end
 
-  def self.pair_history_per_person(team)
+
+  # example return:
+  # {"b"=> {"b"=>0, "a"=>1, "solo"=>0, "out_of_office"=>0},
+  #  "a"=> {"b"=>1, "a"=>0, "solo"=>0, "out_of_office"=>0}}
+  def self.pair_matrix_per_person(team)
     ids = team.team_members.pluck(:id)
     ungrouped_pairs = number_of_times_paired_by_name(ids)
-    members =  team.members_including_statuses.pluck(:name)
+    team_member_names = team.members_including_statuses.pluck(:name)
 
-    pairs_by_person = Hash[members.map {|x| [x, Hash[members.map {|x| [x, 0] }]] }]
+    members_hash_with_zero_values = Hash[team_member_names.map {|x| [x, 0] }]
+    pairs_by_person = team_member_names.each_with_object({}) do |name, memo|
+      memo[name] = members_hash_with_zero_values.dup
+    end
 
-    ungrouped_pairs.each_pair do |(person, pair), count|
-      pairs_by_person[person][pair] = count
+    ungrouped_pairs.each_pair do |(name_one, name_two), count|
+      pairs_by_person[name_one][name_two] = count
+      pairs_by_person[name_two][name_one] = count
     end
 
     pairs_by_person
