@@ -54,7 +54,11 @@ class PairHistory < ApplicationRecord
     solo_id = TeamMember.solo.id
     persons = TeamMember.where(id: person_ids + [solo_id, out_of_office_id]).to_a
     names_by_id = Hash[persons.map(&:id).zip(persons.map(&:name))]
+
     results_by_id.each_pair.with_object({}) do |(key, value), memo|
+      #if there is an id that doesn't have a name because it was deleted then skip to next
+      next if (names_by_id.keys & key).count != 2
+
       name1, name2 = names_by_id[key.first], names_by_id[key.last]
       memo[[name1, name2]] = value
     end
