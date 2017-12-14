@@ -64,7 +64,6 @@ class PairHistory < ApplicationRecord
     end
   end
 
-
   # example return:
   # {"b"=> {"b"=>0, "a"=>1, "solo"=>0, "out_of_office"=>0},
   #  "a"=> {"b"=>1, "a"=>0, "solo"=>0, "out_of_office"=>0}}
