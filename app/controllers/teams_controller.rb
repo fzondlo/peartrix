@@ -20,22 +20,34 @@ class TeamsController < ApplicationController
   end
 
   def show
-    @todays_pairs = todays_pairs
     @new_person = TeamMember.new(team_id: team_id)
-  end
-
-  def show_history
-    @number_of_times_paired_by_name = number_of_times_paired_by_name
   end
 
   private
 
+  helper_method :team
+  def team
+    @team ||= Team.find(team_id)
+  end
+
+  helper_method :team_members
+  def team_members
+    @team_members ||= team.members_including_statuses
+  end
+  
+  helper_method :todays_pairs
   def todays_pairs
     TodaysPairs.new(team: team).pairs
   end
 
+  helper_method :number_of_times_paired_by_name
   def number_of_times_paired_by_name
     PairHistory.number_of_times_paired_by_name(team.team_members.pluck(:id))
+  end
+
+  helper_method :pair_history_per_person
+  def pair_history_per_person
+    PairHistory.pair_history_per_person(team)
   end
 
   def send_email(pairs)
@@ -62,10 +74,6 @@ class TeamsController < ApplicationController
 
   def overrides_for(person)
     OverrideOptions.new(team, person).options
-  end
-
-  def team
-    @team ||= Team.find(team_id)
   end
 
   def team_id
