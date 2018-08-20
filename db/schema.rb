@@ -23,11 +23,11 @@ ActiveRecord::Schema.define(version: 20171107031357) do
   end
 
   create_table "team_members", force: :cascade do |t|
-    t.integer  "team_id",    null: false
-    t.string   "name",       null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean  "archived"
+    t.integer  "team_id",                    null: false
+    t.string   "name",                       null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.boolean  "archived",   default: false
   end
 
   create_table "teams", force: :cascade do |t|
