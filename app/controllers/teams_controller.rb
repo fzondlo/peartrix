@@ -59,6 +59,8 @@ class TeamsController < ApplicationController
                       :subject => "Pairs for #{team.name} - #{Date.today}",
                       :text    => email_text(pairs)}
     mg_client.send_message 'app03158b70ec6646fe8ae0d6115e0219e3.mailgun.org', message_params
+  rescue Mailgun::CommunicationError => e
+    Rails.logger.info("ERROR! #{e.exception}: #{e.message}")
   end
 
   def email_text(pairs)
