@@ -20,12 +20,7 @@
 
   div.dialog > div {
     border: 1px solid #CCC;
-    border-right-color: #999;
-    border-left-color: #999;
-    border-bottom-color: #BBB;
-    border-top: #B00100 solid 4px;
-    border-top-left-radius: 9px;
-    border-top-right-radius: 9px;
+    border-radius: 9px;
     background-color: white;
     padding: 7px 12% 0;
     box-shadow: 0 3px 8px rgba(50, 50, 50, 0.17);
@@ -33,23 +28,8 @@
 
   h1 {
     font-size: 100%;
-    color: #730E15;
+    color: black;
     line-height: 1.5em;
-  }
-
-  div.dialog > p {
-    margin: 0 0 1em;
-    padding: 1em;
-    background-color: #F7F7F7;
-    border: 1px solid #CCC;
-    border-right-color: #999;
-    border-left-color: #999;
-    border-bottom-color: #999;
-    border-bottom-left-radius: 4px;
-    border-bottom-right-radius: 4px;
-    border-top-color: #DADADA;
-    color: #666;
-    box-shadow: 0 3px 8px rgba(50, 50, 50, 0.17);
   }
   </style>
 </head>
@@ -58,9 +38,19 @@
   <!-- This file lives in public/500.html -->
   <div class="dialog">
     <div>
-      <h1>We're sorry, but something went wrong.</h1>
+      <h1>Crikey! You've found a bug</h1>
+      <img src='/bug.png' />
+    <p>
+      Be the first to report it and win a <span style='color: orange; font-weight: bold;'>free beer!</free></span><br />
+      <img src='/beer.png' style='width:200px' /><br />
+
+      Open a <a href='https://github.com/fzondlo/peartrix/issue'>github issue</a> and slack @frank_zondlo to claim your free beer!* 
+    </p>
+
+
+    
     </div>
-    <p>If you are the application owner check the logs for more information.</p>
+    <p style='font-size: 9px'>* Restrictions apply. Must be 21 years or older to claim. Offer not valid for fans of the New England Patriots.</p>
   </div>
 </body>
 </html>
