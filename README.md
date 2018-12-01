@@ -10,7 +10,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-* Ruby 2.3.1
+* Ruby 2.5.3
 * postgresql
 
 ### Installing
